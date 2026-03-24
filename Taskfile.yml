@@ -1,0 +1,39 @@
+version: "3"
+
+vars:
+  BIN: bin
+  NIM_FLAGS: --gc:arc
+
+tasks:
+  default:
+    desc: Build all targets
+    deps: [cli, c-shared, c-static, js]
+
+  cli:
+    desc: Build the CLI executable (bin/hello)
+    cmds:
+      - mkdir -p {{.BIN}}
+      - nim c {{.NIM_FLAGS}} -o:{{.BIN}}/hello src/hello_cli.nim
+
+  c-shared:
+    desc: Build the shared C library (bin/libhello.so)
+    cmds:
+      - mkdir -p {{.BIN}}
+      - nim c --app:lib --noMain {{.NIM_FLAGS}} -o:{{.BIN}}/libhello.so src/hello_c.nim
+
+  c-static:
+    desc: Build the static C library (bin/libhello.a)
+    cmds:
+      - mkdir -p {{.BIN}}
+      - nim c --app:staticlib --noMain {{.NIM_FLAGS}} -o:{{.BIN}}/libhello.a src/hello_c.nim
+
+  js:
+    desc: Build the JavaScript output (bin/hello.js)
+    cmds:
+      - mkdir -p {{.BIN}}
+      - nim js -o:{{.BIN}}/hello.js src/hello_js.nim
+
+  clean:
+    desc: Remove build artifacts
+    cmds:
+      - rm -rf {{.BIN}} nimcache
