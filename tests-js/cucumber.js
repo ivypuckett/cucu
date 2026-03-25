@@ -1,6 +1,6 @@
 module.exports = {
   default: {
-    paths: ['../tests-features/features/**/*.feature'],
+    paths: ['../tests-features/*.feature'],
     require: ['features/step_definitions/**/*.js'],
   },
 };
