@@ -91,7 +91,7 @@ jobs:
         working-directory: tests-cpp
         run: |
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/.deps/cucumber-cpp
+            -DCucumberCpp_DIR=$GITHUB_WORKSPACE/.deps/cucumber-cpp/lib/cmake
           cmake --build build
 
       - name: Set up Ruby
