@@ -15,6 +15,7 @@ target_include_directories(hello-steps PRIVATE
 
 target_link_libraries(hello-steps PRIVATE
   CucumberCpp::cucumber-cpp
+  GTest::gmock
   GTest::gtest
   ${PROJECT_SOURCE_DIR}/../bin/libhello.so
 )
