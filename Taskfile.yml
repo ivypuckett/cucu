@@ -33,6 +33,33 @@ tasks:
       - mkdir -p {{.BIN}}
       - nim js -o:{{.BIN}}/hello.js src/hello_js.nim
 
+  test-cli:
+    desc: Run CLI Cucumber tests (requires bin/hello)
+    dir: tests-cli
+    cmds:
+      - bundle install --quiet
+      - bundle exec cucumber
+
+  test-js:
+    desc: Run JavaScript Cucumber tests (requires bin/hello.js)
+    dir: tests-js
+    cmds:
+      - npm install --silent
+      - npm test
+
+  test-cpp:
+    desc: Build and run C++ Cucumber wire tests (requires bin/libhello.so)
+    dir: tests-cpp
+    cmds:
+      - cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+      - cmake --build build
+      - bundle install --quiet
+      - bundle exec cucumber
+
+  test:
+    desc: Run all test suites (tests-cli, tests-js, tests-cpp)
+    deps: [test-cli, test-js, test-cpp]
+
   clean:
     desc: Remove build artifacts
     cmds:
