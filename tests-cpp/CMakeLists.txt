@@ -3,7 +3,6 @@ project(HelloCucumberCpp CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 
-find_package(GTest REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(CucumberCpp REQUIRED)
 
@@ -15,6 +14,5 @@ target_include_directories(hello-steps PRIVATE
 
 target_link_libraries(hello-steps PRIVATE
   CucumberCpp::cucumber-cpp
-  GTest::gtest
   ${PROJECT_SOURCE_DIR}/../bin/libhello.so
 )

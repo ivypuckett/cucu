@@ -1,0 +1,115 @@
+name: Test
+
+on:
+  pull_request:
+
+jobs:
+  test-cli:
+    name: CLI tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Nim
+        uses: jiro4989/setup-nim-action@v2
+
+      - name: Install Task
+        uses: arduino/setup-task@v2
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+          working-directory: tests-cli
+
+      - name: Build CLI binary
+        run: task cli
+
+      - name: Run CLI tests
+        working-directory: tests-cli
+        run: bundle exec cucumber
+
+  test-js:
+    name: JS tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Nim
+        uses: jiro4989/setup-nim-action@v2
+
+      - name: Install Task
+        uses: arduino/setup-task@v2
+
+      - name: Build JS module
+        run: task js
+
+      - name: Run JS tests
+        working-directory: tests-js
+        run: npm install && npm test
+
+  test-cpp:
+    name: C++ tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y cmake libgtest-dev nlohmann-json3-dev libboost-all-dev libasio-dev libtclap-dev
+
+      - name: Cache CucumberCpp build
+        id: cache-cucumber-cpp
+        uses: actions/cache@v4
+        with:
+          path: _cucumber-cpp-src/build
+          key: cucumber-cpp-${{ runner.os }}-v4
+
+      - name: Clone CucumberCpp
+        if: steps.cache-cucumber-cpp.outputs.cache-hit != 'true'
+        run: git clone --depth 1 https://github.com/cucumber/cucumber-cpp.git _cucumber-cpp-src
+
+      - name: Build CucumberCpp
+        if: steps.cache-cucumber-cpp.outputs.cache-hit != 'true'
+        run: |
+          cmake -B _cucumber-cpp-src/build -S _cucumber-cpp-src \
+            -DCUKE_ENABLE_EXAMPLES=OFF \
+            -DCUKE_ENABLE_TESTS=OFF
+          cmake --build _cucumber-cpp-src/build --parallel
+
+      - name: Install CucumberCpp
+        run: sudo cmake --install _cucumber-cpp-src/build
+
+      - name: Install Nim
+        uses: jiro4989/setup-nim-action@v2
+
+      - name: Install Task
+        uses: arduino/setup-task@v2
+
+      - name: Build shared library
+        run: task c-shared
+
+      - name: Build C++ test runner
+        working-directory: tests-cpp
+        run: |
+          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release \
+            -DCucumberCpp_DIR=/usr/local/lib/cmake
+          cmake --build build
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+          working-directory: tests-cpp
+
+      - name: Run C++ tests
+        working-directory: tests-cpp
+        run: |
+          LD_LIBRARY_PATH=$GITHUB_WORKSPACE/bin ./build/hello-steps -p 3902 &
+          SERVER_PID=$!
+          trap "kill $SERVER_PID 2>/dev/null" EXIT
+          sleep 1
+          bundle exec cucumber
