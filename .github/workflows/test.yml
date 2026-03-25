@@ -65,7 +65,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: _cucumber-cpp-src/build
-          key: cucumber-cpp-${{ runner.os }}-v4
+          key: cucumber-cpp-${{ runner.os }}-v5
 
       - name: Clone CucumberCpp
         if: steps.cache-cucumber-cpp.outputs.cache-hit != 'true'
@@ -76,7 +76,8 @@ jobs:
         run: |
           cmake -B _cucumber-cpp-src/build -S _cucumber-cpp-src \
             -DCUKE_ENABLE_EXAMPLES=OFF \
-            -DCUKE_ENABLE_TESTS=OFF
+            -DCUKE_ENABLE_TESTS=OFF \
+            -DCUKE_ENABLE_GTEST=ON
           cmake --build _cucumber-cpp-src/build --parallel
 
       - name: Install CucumberCpp
@@ -110,6 +111,6 @@ jobs:
         run: |
           LD_LIBRARY_PATH=$GITHUB_WORKSPACE/bin ./build/hello-steps -p 3902 &
           SERVER_PID=$!
-          trap "kill $SERVER_PID 2>/dev/null" EXIT
+          trap "kill $SERVER_PID 2>/dev/null || true" EXIT
           sleep 1
           bundle exec cucumber
