@@ -14,3 +14,7 @@ proc hello_greet*(name: cstring): cstring {.exportc, dynlib.} =
 proc hello_world*(): cstring {.exportc, dynlib.} =
   ## C-callable wrapper for helloWorld().
   hello.helloWorld().cstring
+
+proc hello_parse*(input: cstring): cstring {.exportc, dynlib.} =
+  ## C-callable wrapper for parse().
+  hello.parse($input).cstring

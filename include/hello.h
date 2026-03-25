@@ -12,6 +12,9 @@ const char* hello_greet(const char* name);
 /** Returns the classic "Hello, World!" string. */
 const char* hello_world(void);
 
+/** Parses a string into a JSON representation. Returns "{}" for blank input. */
+const char* hello_parse(const char* input);
+
 #ifdef __cplusplus
 }
 #endif
