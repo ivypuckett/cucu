@@ -10,6 +10,18 @@
 
 Source is in `src/`, C headers in `include/`, build outputs go to `bin/`.
 
+## First-time setup
+
+If `nim`, `task`, or the C++ test dependencies are missing, run:
+
+```sh
+sudo bash scripts/setup.sh
+```
+
+This installs: nim, the Task CLI (from GitHub releases — taskfile.dev may be
+blocked in restricted environments), all C++ build deps (gtest, nlohmann_json,
+asio, tclap, boost), and builds/installs cucumber-cpp from source.
+
 ## Build
 
 The project uses [Task](https://taskfile.dev) (`task` CLI) as the task runner.
@@ -21,11 +33,6 @@ task c-shared # build bin/libhello.so
 task c-static # build bin/libhello.a
 task js       # build bin/hello.js
 task clean    # remove bin/ and nimcache/
-```
-
-Install Task if needed:
-```sh
-sh -c "$(curl -ssL https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
 ```
 
 ## Tests
