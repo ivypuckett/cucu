@@ -16,12 +16,19 @@ jobs:
       - name: Install Task
         uses: arduino/setup-task@v2
 
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+          working-directory: tests-cli
+
       - name: Build CLI binary
         run: task cli
 
       - name: Run CLI tests
         working-directory: tests-cli
-        run: bundle install && bundle exec cucumber
+        run: bundle exec cucumber
 
   test-js:
     name: JS tests
@@ -87,10 +94,16 @@ jobs:
             -DCMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/.deps/cucumber-cpp
           cmake --build build
 
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+          working-directory: tests-cpp
+
       - name: Run C++ tests
         working-directory: tests-cpp
         run: |
-          bundle install
           LD_LIBRARY_PATH=$GITHUB_WORKSPACE/bin ./build/hello-steps -p 3902 &
           SERVER_PID=$!
           trap "kill $SERVER_PID 2>/dev/null" EXIT
