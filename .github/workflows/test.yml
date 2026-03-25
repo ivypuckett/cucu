@@ -1,0 +1,88 @@
+name: Test
+
+on:
+  pull_request:
+
+jobs:
+  test-cli:
+    name: CLI tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Nim
+        uses: jiro4989/setup-nim-action@v2
+
+      - name: Install Task
+        uses: arduino/setup-task@v2
+
+      - name: Build CLI binary
+        run: task cli
+
+      - name: Run CLI tests
+        working-directory: tests-cli
+        run: bundle install && bundle exec cucumber
+
+  test-js:
+    name: JS tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Nim
+        uses: jiro4989/setup-nim-action@v2
+
+      - name: Install Task
+        uses: arduino/setup-task@v2
+
+      - name: Build JS module
+        run: task js
+
+      - name: Run JS tests
+        working-directory: tests-js
+        run: npm install && npm test
+
+  test-cpp:
+    name: C++ tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y cmake libgtest-dev nlohmann-json3-dev libboost-all-dev
+
+      - name: Install CucumberCpp
+        run: |
+          git clone --depth 1 https://github.com/cucumber/cucumber-cpp.git
+          cmake -B cucumber-cpp/build -S cucumber-cpp \
+            -DCUKE_ENABLE_EXAMPLES=OFF \
+            -DCUKE_ENABLE_TESTS=OFF
+          cmake --build cucumber-cpp/build --parallel
+          sudo cmake --install cucumber-cpp/build
+
+      - name: Install Nim
+        uses: jiro4989/setup-nim-action@v2
+
+      - name: Install Task
+        uses: arduino/setup-task@v2
+
+      - name: Build shared library
+        run: task c-shared
+
+      - name: Build C++ test runner
+        working-directory: tests-cpp
+        run: |
+          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+          cmake --build build
+
+      - name: Run C++ tests
+        working-directory: tests-cpp
+        run: |
+          bundle install
+          LD_LIBRARY_PATH=$GITHUB_WORKSPACE/bin ./build/hello-steps -p 3902 &
+          SERVER_PID=$!
+          trap "kill $SERVER_PID 2>/dev/null" EXIT
+          sleep 1
+          bundle exec cucumber
