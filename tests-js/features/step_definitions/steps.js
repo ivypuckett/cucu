@@ -5,10 +5,6 @@ const hello = require('../../../bin/hello.js');
 let result;
 let input;
 
-When('the hello world function is called', function () {
-  result = hello.helloWorld();
-});
-
 When('I greet {string}', function (name) {
   result = hello.greet(name);
 });

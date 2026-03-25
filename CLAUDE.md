@@ -2,25 +2,13 @@
 
 ## Project Overview
 
-**cucu** is a Hello World library written in Nim, targeting multiple output formats:
+**cucu** is a parser library written in Nim, targeting multiple output formats:
 - A CLI executable (`bin/hello`)
 - A shared C library (`bin/libhello.so`)
 - A static C library (`bin/libhello.a`)
 - A JavaScript module (`bin/hello.js`)
 
 Source is in `src/`, C headers in `include/`, build outputs go to `bin/`.
-
-## First-time setup
-
-If `nim`, `task`, or the C++ test dependencies are missing, run:
-
-```sh
-sudo bash scripts/setup.sh
-```
-
-This installs: nim, the Task CLI (from GitHub releases — taskfile.dev may be
-blocked in restricted environments), all C++ build deps (gtest, nlohmann_json,
-asio, tclap, boost), and builds/installs cucumber-cpp from source.
 
 ## Build
 
@@ -37,7 +25,7 @@ task clean    # remove bin/ and nimcache/
 
 ## Tests
 
-Feature files live in `tests-features/features/`. Three test suites each implement those features:
+Feature files live in `tests-features/`. Three test suites each implement those features:
 
 | Folder       | Runner            | Command               | Requires      |
 |--------------|-------------------|-----------------------|---------------|

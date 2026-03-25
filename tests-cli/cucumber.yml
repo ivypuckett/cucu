@@ -1,1 +1,1 @@
-default: --require features ../tests-features/features
+default: --require features ../tests-features
