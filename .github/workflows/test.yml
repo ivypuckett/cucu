@@ -94,7 +94,8 @@ jobs:
       - name: Build C++ test runner
         working-directory: tests-cpp
         run: |
-          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release \
+            -DCucumberCpp_DIR=/usr/local/lib/cmake
           cmake --build build
 
       - name: Set up Ruby
