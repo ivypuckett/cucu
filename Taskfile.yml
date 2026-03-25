@@ -19,7 +19,7 @@ tasks:
     desc: Build the shared C library (bin/libhello.so)
     cmds:
       - mkdir -p {{.BIN}}
-      - nim c --app:lib --noMain {{.NIM_FLAGS}} -o:{{.BIN}}/libhello.so src/hello_c.nim
+      - nim c --app:lib --noMain {{.NIM_FLAGS}} --passC:-fPIC --passL:-fPIC -o:{{.BIN}}/libhello.so src/hello_c.nim
 
   c-static:
     desc: Build the static C library (bin/libhello.a)
@@ -37,8 +37,8 @@ tasks:
     desc: Run CLI Cucumber tests (requires bin/hello)
     dir: tests-cli
     cmds:
-      - bundle install --quiet
-      - bundle exec cucumber
+      - bundle _2.5.22_ install --quiet
+      - /opt/rbenv/versions/3.3.6/bin/cucumber
 
   test-js:
     desc: Run JavaScript Cucumber tests (requires bin/hello.js)
@@ -51,10 +51,10 @@ tasks:
     desc: Build and run C++ Cucumber wire tests (requires bin/libhello.so)
     dir: tests-cpp
     cmds:
-      - cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+      - cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCucumberCpp_DIR=/usr/local/lib/cmake
       - cmake --build build
-      - bundle install --quiet
-      - bundle exec cucumber
+      - bundle _2.5.22_ install --quiet
+      - sh -c 'LD_LIBRARY_PATH={{.ROOT_DIR}}/bin ./build/hello-steps -p 3902 & SERVER_PID=$!; trap "kill $SERVER_PID 2>/dev/null" EXIT; sleep 1; /opt/rbenv/versions/3.3.6/bin/cucumber; STATUS=$?; kill $SERVER_PID 2>/dev/null; exit $STATUS'
 
   test:
     desc: Run all test suites (tests-cli, tests-js, tests-cpp)

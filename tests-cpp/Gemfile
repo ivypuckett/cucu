@@ -1,4 +1,4 @@
 source "https://rubygems.org"
 
 gem "cucumber", "~> 9.0"
-gem "cucumber-wire", "~> 6.0"
+gem "cucumber-wire", "~> 8.0"
