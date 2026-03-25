@@ -1,0 +1,11 @@
+{
+  "name": "hello-cucumber-js",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "cucumber-js"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "^11.0.0"
+  }
+}
