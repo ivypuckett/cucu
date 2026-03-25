@@ -4,6 +4,7 @@ project(HelloCucumberCpp CXX)
 set(CMAKE_CXX_STANDARD 14)
 
 find_package(GTest REQUIRED)
+find_package(nlohmann_json REQUIRED)
 find_package(CucumberCpp REQUIRED)
 
 add_executable(hello-steps src/hello_steps.cpp)

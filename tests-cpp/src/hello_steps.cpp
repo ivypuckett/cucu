@@ -1,11 +1,13 @@
-#include <cucumber-cpp/autodetect.hpp>
 #include <gtest/gtest.h>
+#include <cucumber-cpp/autodetect.hpp>
 
 extern "C" {
 #include "hello.h"
 }
 
 #include <string>
+
+using namespace cucumber;
 
 struct HelloContext {
     std::string result;
