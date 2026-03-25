@@ -111,6 +111,6 @@ jobs:
         run: |
           LD_LIBRARY_PATH=$GITHUB_WORKSPACE/bin ./build/hello-steps -p 3902 &
           SERVER_PID=$!
-          trap "kill $SERVER_PID 2>/dev/null" EXIT
+          trap "kill $SERVER_PID 2>/dev/null || true" EXIT
           sleep 1
           bundle exec cucumber
