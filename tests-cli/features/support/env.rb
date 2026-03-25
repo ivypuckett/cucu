@@ -1,4 +1,7 @@
 require 'aruba/cucumber'
+require 'rspec/matchers'
+
+World(RSpec::Matchers)
 
 Before do
   prepend_environment_variable(
