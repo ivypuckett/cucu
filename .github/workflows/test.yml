@@ -58,14 +58,14 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y cmake libgtest-dev nlohmann-json3-dev libboost-all-dev
+          sudo apt-get install -y cmake libgtest-dev nlohmann-json3-dev libboost-all-dev libasio-dev
 
       - name: Cache CucumberCpp
         id: cache-cucumber-cpp
         uses: actions/cache@v4
         with:
           path: .deps/cucumber-cpp
-          key: cucumber-cpp-${{ runner.os }}-v1
+          key: cucumber-cpp-${{ runner.os }}-v2
 
       - name: Build and install CucumberCpp
         if: steps.cache-cucumber-cpp.outputs.cache-hit != 'true'
