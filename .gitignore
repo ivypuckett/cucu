@@ -2,3 +2,5 @@ nimcache/
 nimblecache/
 htmldocs/
 node_modules/
+bin/
+tests-cpp/build/
