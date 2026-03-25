@@ -53,14 +53,23 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y cmake libgtest-dev nlohmann-json3-dev libboost-all-dev
 
-      - name: Install CucumberCpp
+      - name: Cache CucumberCpp
+        id: cache-cucumber-cpp
+        uses: actions/cache@v4
+        with:
+          path: .deps/cucumber-cpp
+          key: cucumber-cpp-${{ runner.os }}-v1
+
+      - name: Build and install CucumberCpp
+        if: steps.cache-cucumber-cpp.outputs.cache-hit != 'true'
         run: |
-          git clone --depth 1 https://github.com/cucumber/cucumber-cpp.git
-          cmake -B cucumber-cpp/build -S cucumber-cpp \
+          git clone --depth 1 https://github.com/cucumber/cucumber-cpp.git _cucumber-cpp-src
+          cmake -B _cucumber-cpp-src/build -S _cucumber-cpp-src \
+            -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/.deps/cucumber-cpp \
             -DCUKE_ENABLE_EXAMPLES=OFF \
             -DCUKE_ENABLE_TESTS=OFF
-          cmake --build cucumber-cpp/build --parallel
-          sudo cmake --install cucumber-cpp/build
+          cmake --build _cucumber-cpp-src/build --parallel
+          cmake --install _cucumber-cpp-src/build
 
       - name: Install Nim
         uses: jiro4989/setup-nim-action@v2
@@ -74,7 +83,8 @@ jobs:
       - name: Build C++ test runner
         working-directory: tests-cpp
         run: |
-          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/.deps/cucumber-cpp
           cmake --build build
 
       - name: Run C++ tests
