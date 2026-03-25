@@ -62,6 +62,11 @@ cd tests-js && npm install && npm test && cd ..
 cd tests-cpp && cmake -B build -S . && cmake --build build && bundle install && bundle exec cucumber && cd ..
 ```
 
+## Code Style Rules
+
+- All files must be **300 lines of code or fewer**.
+- If a file exceeds 300 LOC, refactor it into multiple smaller files before committing.
+
 ## Before Committing
 
 **Always run all tests before committing:**
